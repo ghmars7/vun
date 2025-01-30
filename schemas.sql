@@ -31,16 +31,21 @@ CREATE TABLE produits
 (
     id_produit     INT AUTO_INCREMENT PRIMARY KEY,
     id_categorie   INT,
-    id_fournisseur INT,
     nom            VARCHAR(55),
     description    TEXT,
     prix_unitaire  DECIMAL(2),
     quantite       INT,
     FOREIGN KEY (id_categorie) REFERENCES categories (id_categories),
-    FOREIGN KEY (id_fournisseur) REFERENCES fournisseurs (id_fournisseur)
 );
 
-
+CREATE TABLE fournisseur_produit
+(
+    id_fournisseur INT,
+    id_produit     INT,
+    PRIMARY KEY (id_fournisseur, id_produit),
+    FOREIGN KEY (id_fournisseur) REFERENCES fournisseurs (id_fournisseur) ON DELETE CASCADE,
+    FOREIGN KEY (id_produit) REFERENCES produits (id_produit) ON DELETE CASCADE
+);
 
 CREATE TABLE commandes
 (
