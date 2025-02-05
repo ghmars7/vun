@@ -2,12 +2,14 @@
 
 Premiere version du projet
 
-##### Tables des matieres 
+### Tables des matieres 
 
 - [Lancement du POC](#lancement-du-projet-)  
 - [Listes des endpoints](#liste-des-endpoints-)  
 - [Diagramme MLD](#diagramme-mld-base-de-donnees)
 - [Pistes d'amelioration](#pistes-damelioration-pour-la-v2)
+
+--- 
 
 ### Lancement du projet 
 
@@ -25,6 +27,9 @@ npm install
 ````shell
 node server.js 
 ````
+
+--- 
+
 ### Liste des endpoints 
 
 
