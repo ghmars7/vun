@@ -17,10 +17,12 @@ Premiere version du projet
 ````shell
 git clone https://github.com/ghmars7/vun.git 
 ````
-#### Lancement 
 ````shell
 cd vun 
 ````
+
+#### Lancement 
+
 ````shell
 npm install 
 ````
