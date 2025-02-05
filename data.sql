@@ -17,19 +17,19 @@ INSERT INTO fournisseurs (nom_entreprise, email, num_telephone) VALUES
 
 -- Insérer des catégories
 INSERT INTO categories (nom) VALUES
-('Papier A4'),
-('Carton'),
-('Papier recyclé'),
-('Cahiers'),
-('Stylos');
+('cat 1'),
+('cat 2'),
+('cat 3'),
+('cat 4'),
+('cat 5');
 
 -- Insérer des produits
 INSERT INTO produits (id_categorie, nom, description, prix_unitaire, quantite) VALUES
-(1, 'Papier A4 Premium', 'Papier blanc de haute qualité, grammage 80g/m²', 5.99, 500),
-(2, 'Carton ondulé', 'Carton résistant pour emballage', 12.50, 200),
-(3, 'Papier recyclé A4', 'Papier écologique fabriqué à partir de matériaux recyclés', 4.99, 300),
-(4, 'Cahier ligné 96 pages', 'Cahier standard pour prise de notes', 2.49, 100),
-(5, 'Stylo bille bleu', 'Stylo bille de marque renommée', 0.99, 500);
+(1, 'cat 1', 'Papier blanc de haute qualité, grammage 80g/m²', 5.99, 500),
+(2, 'cat 2', 'Carton résistant pour emballage', 12.50, 200),
+(3, 'cat 3', 'Papier écologique fabriqué à partir de matériaux recyclés', 4.99, 300),
+(4, 'cat 4', 'Cahier standard pour prise de notes', 2.49, 100),
+(5, 'cat 5', 'Stylo bille de marque renommée', 0.99, 500);
 
 -- Insérer les relations entre fournisseurs et produits
 INSERT INTO fournisseur_produit (id_fournisseur, id_produit) VALUES
