@@ -23,8 +23,8 @@ const initDB = async () => {
         const connection = await mysql.createConnection(dbConfig);
         console.log('Connexion à MySQL réussie');
 
-        await connection.changeUser({ database: 'usinepapier' });
-
+        await executeSQLFile(connection, 'schemas.sql');
+        await executeSQLFile(connection, 'data.sql');
         console.log('Base de données initialisée avec succès');
         return connection;
     } catch (err) {
@@ -123,24 +123,17 @@ initDB().then(connection => {
 
     app.post('/produits', async (req, res) => {
         const { id_categorie, nom, description, prix_unitaire, quantite } = req.body;
-        const sql = 'INSERT INTO produits (id_categorie, nom, description, prix_unitaire, quantite) VALUES (?,?,?,?,?)';
-        await connection.query(sql, [id_categorie, nom, description, prix_unitaire, quantite]);
-
-        await connection.beginTransaction();
-
         // Insertion dans la table produits
         const [resultProduit] = await connection.execute(`INSERT INTO produits (id_categorie, nom, description, prix_unitaire, quantite) VALUES (?, ?, ?, ?, ?)`,
-            [produit.id_categorie, produit.nom, produit.description, produit.prix_unitaire, produit.quantite]);
+            [id_categorie, nom, description, prix_unitaire, quantite]);
 
         const produitId = resultProduit.insertId;
         console.log(`Produit inséré avec succès, ID : ${produitId}`);
 
         // Insertion dans la table fournisseur_produit
-        await connection.execute(
-            `INSERT INTO fournisseur_produit (id_fournisseur, id_produit, prix_propose, quantite_disponible) VALUES (?, ?, ?, ?)`,
-            [fournisseurId, produitId, prixPropose, quantiteDisponible]
-        );
-        await connection.commit();
+        await connection.execute(`INSERT INTO fournisseur_produit (id_fournisseur, id_produit, prix_propose, quantite_disponible) VALUES (?, ?, ?, ?)`,
+            [fournisseurId, produitId, prixPropose, quantiteDisponible]);
+
         console.log(`Relation fournisseur-produit ajoutée avec succès.`);
         res.status(201).json({ message: 'produit ajouté avec succès' });
     });
@@ -171,7 +164,30 @@ initDB().then(connection => {
     });
 
     app.post('/commandes', async (req, res) => {
-        const { id_client, id_ligne_commande, date_commande, date_expidition } = req.body;
+        const { id_client, date_commande, date_expidition, lignes } = req.body;
+
+        const [commandeResult] = await connection.execute('INSERT INTO commandes (id_client, date_commande, date_expidition) VALUES (?, ?, ?)',
+            [id_client, date_commande, date_expidition]);
+
+        // Récupérer l'ID de la commande insérée
+        const id_commande = commandeResult.insertId;
+        console.log(`Commande insérée avec succès, ID : ${id_commande}`);
+        // Insérer chaque ligne de commande
+        for (const ligne of lignes) {
+            const { id_produit, quantite } = ligne;
+
+            // Calculer le prix total pour cette ligne (prix_unitaire * quantite)
+            const prixUnitaire = produitRows[0].prix_unitaire;
+            const prixTotal = prixUnitaire * quantite;
+
+            // Insérer la ligne de commande
+            await connection.execute(
+                'INSERT INTO ligne_commande (id_produit, id_commande, quantite, prix) VALUES (?, ?, ?, ?)',
+                [id_produit, id_commande, quantite, prixTotal]
+            );
+        }
+
+        console.log('Lignes de commande insérées avec succès.');
         const sql = 'INSERT INTO commandes (id_client, id_ligne_commande, date_commande, date_expidition) VALUES (?, ?, ?, ?)';
         await connection.query(sql, [id_client, id_ligne_commande, date_commande, date_expidition]);
         res.status(201).json({ message: 'commandes ajouté avec succès' });
